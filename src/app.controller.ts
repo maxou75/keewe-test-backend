@@ -1,8 +1,6 @@
 import { Body, Controller, Get, HttpException, HttpStatus, Post, Query } from "@nestjs/common";
 import { AppService } from './app.service';
 import { CurrenciesApi } from './currencies-api';
-import { isNumber } from "@nestjs/common/utils/shared.utils";
-import { Database } from "./database";
 
 @Controller()
 export class AppController {
