@@ -4,6 +4,7 @@ import { RxDatabase } from 'rxdb/dist/types/types';
 import { RxDBMigrationPlugin } from 'rxdb/plugins/migration';
 import { RxDBJsonDumpPlugin } from 'rxdb/plugins/json-dump';
 import { Injectable } from '@nestjs/common';
+import { Payment } from './interfaces';
 
 @Injectable()
 export class Database {
@@ -65,23 +66,23 @@ export class Database {
     });
   }
 
-  async insertPayment(data: {
-    selectedCurrency: string;
-    paid: number;
-    cardData: object;
-  }): Promise<void> {
+  async insertPayment(
+    selectedCurrency: string,
+    paid: number,
+    cardData: string,
+  ): Promise<void> {
     this.numberOfPayments++;
     await this.db.payment.insert({
       id: `payment_${this.numberOfPayments}`,
       date: Date.now(),
-      currency: data.selectedCurrency,
-      paid: data.paid,
+      currency: selectedCurrency,
+      paid: paid,
       status: 'valid',
-      cardData: data.cardData,
+      cardData: cardData,
     });
   }
 
-  async getPaymentCollection(): Promise<object[]> {
+  async getPaymentCollection(): Promise<Payment[]> {
     const payments = await this.db.payment.exportJSON();
     return payments.docs.map((p) => ({
       currency: p.currency,

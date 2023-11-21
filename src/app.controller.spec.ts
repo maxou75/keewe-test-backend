@@ -5,6 +5,7 @@ import { HttpModule } from '@nestjs/axios';
 import { CurrenciesApi } from './currencies-api';
 import { Database } from './database';
 import * as request from 'supertest';
+import { Payment } from './interfaces';
 
 describe('AppController', () => {
   let app: any;
@@ -122,8 +123,8 @@ describe('AppController', () => {
         .get('/payments')
         .expect(200)
         .expect(({ body }) => {
-          expect(body?.length).toBe(1)
-          body.forEach((payment: any) => {
+          expect(body?.length).toBe(1);
+          body.forEach((payment: Payment) => {
             ['currency', 'date', 'id', 'paid', 'status'].forEach(
               (p: string) => {
                 expect(payment).toHaveProperty(p);

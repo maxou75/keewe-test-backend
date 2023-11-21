@@ -1,6 +1,15 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Post, Query } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Get,
+  HttpException,
+  HttpStatus,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { AppService } from './app.service';
 import { CurrenciesApi } from './currencies-api';
+import { Conversion, Currencies, Payment } from './interfaces';
 
 @Controller()
 export class AppController {
@@ -10,8 +19,8 @@ export class AppController {
   ) {}
 
   @Get('currencies')
-  async findAllCurrencies(): Promise<object> {
-    let result: object;
+  async findAllCurrencies(): Promise<Currencies> {
+    let result: Currencies;
     try {
       result = await this.currenciesApi.getCurrencies();
     } catch (e) {
@@ -24,8 +33,10 @@ export class AppController {
   }
 
   @Get('conversion')
-  async getConversion(@Query() query: any): Promise<object> {
-    let result, currencies;
+  async getConversion(
+    @Query() query: { selectedCurrency: string; amount: number },
+  ): Promise<Conversion> {
+    let result: Conversion, currencies: Currencies;
     const { selectedCurrency, amount } = query;
     try {
       currencies = await this.currenciesApi.getCurrencies();
@@ -58,13 +69,13 @@ export class AppController {
     data: {
       selectedCurrency: string;
       amount: number;
-      cardData: object;
+      cardData: string;
     },
   ): Promise<{
     selectedCurrency: string;
     paid: number;
   }> {
-    let result, currencies;
+    let result, currencies: Currencies;
     try {
       currencies = await this.currenciesApi.getCurrencies();
     } catch (e) {
@@ -96,10 +107,10 @@ export class AppController {
   }
 
   @Get('payments')
-  async findAllPayments(): Promise<object> {
-    let result;
+  async findAllPayments(): Promise<Payment[]> {
+    let result: Payment[];
     try {
-      result = this.appService.getPayments();
+      result = await this.appService.getPayments();
     } catch (e) {
       throw new HttpException(
         'Erreur lors de la récupération des paiements.',

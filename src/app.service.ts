@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { Database } from "./database";
+import { Database } from './database';
 import { CurrenciesApi } from './currencies-api';
+import { Conversion, Currencies, Payment } from './interfaces';
 
 @Injectable()
 export class AppService {
@@ -9,37 +10,27 @@ export class AppService {
     private database: Database,
   ) {}
   async postPayment(
-    selectedCurrency: string,
+    currency: string,
     amount: number,
-    cardData: object,
-  ): Promise<{
-    selectedCurrency: string;
-    paid: number;
-  }> {
+    cardData: string,
+  ): Promise<Payment> {
     const currencies = await this.currenciesApi.getCurrencies();
-    const paid = currencies[selectedCurrency] * amount;
-    await this.database.insertPayment({
-      selectedCurrency,
-      paid,
-      cardData,
-    });
-    return { selectedCurrency, paid };
+    const paid = currencies[currency] * amount;
+    await this.database.insertPayment(currency, paid, cardData);
+    return { currency, paid } as Payment;
   }
 
-  async getConversion(
-    selectedCurrency: string,
-    amount: number,
-  ): Promise<object> {
-    const currencies = await this.currenciesApi.getCurrencies();
-    const convertedAmount = amount * currencies[selectedCurrency];
+  async getConversion(currency: string, amount: number): Promise<Conversion> {
+    const currencies: Currencies = await this.currenciesApi.getCurrencies();
+    const convertedAmount: number = amount * currencies[currency];
     return {
-      selectedCurrency,
+      currency,
       amount,
       convertedAmount,
     };
   }
 
-  async getPayments(): Promise<object[]> {
+  async getPayments(): Promise<Payment[]> {
     return await this.database.getPaymentCollection();
   }
 }

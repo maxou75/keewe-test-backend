@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { catchError, combineLatest, first, firstValueFrom, map } from 'rxjs';
 import { AxiosError } from 'axios';
+import { Currencies } from './interfaces';
 
 const apiKey: string = 'cur_live_92SH1np3TmHV3WNdZ7H1qmUez9HBuAmCpV1Zzzyw';
 const endpointUrl: string = `https://api.currencyapi.com/v3/latest?apikey=${apiKey}&currencies=USD%2CEUR%2CGBP`;
@@ -10,8 +11,8 @@ const getEndpointUrl = (base: string) => `${endpointUrl}&base_currency=${base}`;
 
 @Injectable()
 export class CurrenciesApi {
-  private currencies: any = {};
-  /*private currencies: any = {
+  private currencies: Currencies;
+  /*private currencies: Currencies = {
     'EUR/EUR': 1,
     'EUR/USD': 1.0911,
     'USD/EUR': 0.9162,
@@ -25,7 +26,7 @@ export class CurrenciesApi {
 
   constructor(private readonly httpService: HttpService) {}
 
-  async getCurrencies(): Promise<object> {
+  async getCurrencies(): Promise<Currencies> {
     try {
       if (!Object.keys(this.currencies).length) await this.setCurrencies();
     } catch (e) {
@@ -40,9 +41,8 @@ export class CurrenciesApi {
     });
   }
 
-  async setCurrencies(): Promise<any[]> {
-    this.currencies = {};
-    return await firstValueFrom(
+  async setCurrencies(): Promise<void> {
+    await firstValueFrom(
       combineLatest([
         this.httpService.get<any[]>(getEndpointUrl('EUR')).pipe(
           first(),
