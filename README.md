@@ -22,13 +22,13 @@ To run the unit tests:
 
 ## Conception
 
-I decided to implement a service that use a local NoSQL database called RxDB for its simplicity and efficiency. Indeed, it uses the process storage, so it is not persistent.
-I also implemented a service to call an external API (currencyapi.com) to have real-time currencies in the app. I am limited to 300 calls due to the free account limitation so, use the static in-code currencies value if necessary.
-I first wanted to use exchangeratesapi.io, but it turned out that this API only allows to get EUR rates currency.
-I have all the tests in app.controller.spec.test.ts file that check that all services works well and return errors if necessary.
+I decided to implement a service that uses a local NoSQL database called RxDB for its simplicity and efficiency. Indeed, it uses the process storage, so it is not persistent. 
+I also implemented a service to call an external API (currencyapi.com) to have real-time currencies in the app. I am limited to 300 calls due to the free account limitation so, please use the static in-code currencies value if necessary. 
+I first wanted to use exchangeratesapi.io, but it turned out that this API only allowed me to get EUR currencies. 
+Furthermore, I have all the tests in the app.controller.spec.test.ts file that check that all services work well and return errors if necessary.
 
 There are 4 REST API services :
 - Fetch the currencies. 
-- Get a conversion currency value. It uses the real-time currencies to calculate a specified amount for a specified allowed currency.
-- Insert a new payment. It inserts the payment in a specific collections.
+- Get a conversion currency value. It uses the real-time currencies to calculate a specified amount for a specified allowed currency. 
+- Insert a new payment. It inserts the payment into a specific collection. 
 - Retrieve all the payments. It gets the payments from the specific collections.
