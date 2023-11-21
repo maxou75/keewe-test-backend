@@ -80,9 +80,14 @@ describe('AppController', () => {
       amount: 10,
       cardData: 'test',
     };
-    const invalidPayment = {
+    const invalidPayment1 = {
       selectedCurrency: 'EUR/JPN',
-      amount: 10,
+      amount: 15,
+      cardData: 'test',
+    };
+    const invalidPayment2 = {
+      selectedCurrency: 'EUR/USD',
+      amount: 'pomme',
       cardData: 'test',
     };
 
@@ -98,10 +103,17 @@ describe('AppController', () => {
         });
     });
 
-    it('should not insert invalid payment', async () => {
+    it('should not insert payment with invalid currency', async () => {
       return request(app.getHttpServer())
         .post('/payment')
-        .send(invalidPayment)
+        .send(invalidPayment1)
+        .expect(400);
+    });
+
+    it('should not insert payment with invalid amount', async () => {
+      return request(app.getHttpServer())
+        .post('/payment')
+        .send(invalidPayment2)
         .expect(400);
     });
 
@@ -110,6 +122,7 @@ describe('AppController', () => {
         .get('/payments')
         .expect(200)
         .expect(({ body }) => {
+          expect(body?.length).toBe(1)
           body.forEach((payment: any) => {
             ['currency', 'date', 'id', 'paid', 'status'].forEach(
               (p: string) => {
